@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import TradingVue from './TradingVue.vue'
 import Data from '../data/data.json'
 
@@ -23,10 +24,48 @@ export default {
     },
     mounted() {
         window.addEventListener('resize', this.onResize)
-        setTimeout(() => {
+        setInterval(() => {
             // Async data setup
-            this.$set(this, 'chart', Data)
-        }, 0)
+            axios.get('/data/data.txt')
+                .then((response) => {
+                    let lines = response.data.split(/[\r\n]+/)
+                    lines.shift()
+                    let chartData = {
+                        chart: {
+                            indexBased: true,
+                            tf: "1H",
+                            type: "Candles",
+                            data: []
+                        }
+                    };
+                    for (let line of lines)
+                    {
+                        let lineParts = line.split(/\s/);
+                        if (lineParts.length < 5)
+                        {
+                            continue
+                        }
+                        let item = [
+                            1584428400000,
+                            parseInt(lineParts[1]), // open
+                            parseInt(lineParts[3]), // high
+                            parseInt(lineParts[2]), // low
+                            parseInt(lineParts[4]), // close
+                            parseInt(lineParts[5]) // volume
+                        ];
+                        if (item[5] == 0)
+                        {
+                            item.push({
+                                colorCandleUp: "black",
+                                colorCandleDw: "pink"
+                            });
+                        }
+                        chartData.chart.data.push(item);
+                    }
+                    this.$set(this, 'chart', chartData)
+                    console.log("pruu")
+                });
+        }, 2000)
     },
     beforeDestroy() {
         window.removeEventListener('resize', this.onResize)

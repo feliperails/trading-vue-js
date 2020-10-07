@@ -45,7 +45,7 @@ export default {
     props: {
         titleTxt: {
             type: String,
-            default: 'TradingVue.js'
+            default: 'TradingVue Pruu'
         },
         id: {
             type: String,
