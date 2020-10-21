@@ -35,7 +35,11 @@ export default {
                             indexBased: true,
                             tf: "1H",
                             type: "Candles",
-                            data: []
+                            data: [],
+                            "settings": {
+                                showVolume : true,
+                                priceLine: true
+                            }
                         }
                     };
                     for (let line of lines)
